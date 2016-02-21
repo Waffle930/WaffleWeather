@@ -1,11 +1,14 @@
 package com.example.waffle.waffleweather.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +30,9 @@ public class WeatherActivity extends Activity {
     private TextView weatherText;
     private TextView publishTimeText;
     private TextView currentDateText;
+    private String currentCityId;
+    private Button home;
+    private Button refresh;
 
 //    https://api.heweather.com/x3/weather?cityid=城市ID&key=你的认证key
     private final String APIHEAD = "https://api.heweather.com/x3/weather?";
@@ -44,8 +50,27 @@ public class WeatherActivity extends Activity {
         weatherText = (TextView) findViewById(R.id.weather_desp);
         publishTimeText = (TextView) findViewById(R.id.publish_text);
         currentDateText = (TextView) findViewById(R.id.current_date);
-        String cityId = getIntent().getStringExtra("cityId");
-        requestWeatherInfo(cityId);
+        home = (Button) findViewById(R.id.home_button);
+        refresh = (Button) findViewById(R.id.refresh_button);
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit().clear().commit();
+                Intent intent = new Intent(WeatherActivity.this,ChooseAreaActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishTimeText.setText("同步中...");
+                PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit().clear().commit();
+                requestWeatherInfo(currentCityId);
+            }
+        });
+        currentCityId = getIntent().getStringExtra("cityId");
+        requestWeatherInfo(currentCityId);
     }
     private void requestWeatherInfo(final String cityId){
         String address = APIHEAD + "cityid=" + cityId + "&key=" + APIKEY;
