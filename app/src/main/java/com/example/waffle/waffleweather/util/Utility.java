@@ -33,7 +33,6 @@ public class Utility {
             JSONObject cond = dailyForecast.getJSONObject("cond");
             String weatherDay = cond.getString("txt_d");
             String weatherNight = cond.getString("txt_n");
-//            Toast.makeText(context,cityName,Toast.LENGTH_LONG).show();
             saveWeatherInfo(context,cityName,tempMin,tempMax,weatherDay,weatherNight,publishTime);
         }catch (Exception e){
             e.printStackTrace();

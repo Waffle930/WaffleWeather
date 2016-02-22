@@ -50,21 +50,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         input.close();
     }
 
-//    private boolean checkDataBase(){
-//        boolean checkdb = false;
-//        String mPath = DB_PATH+DB_NAME;
-//        File dbFile = new File(mPath);
-//        checkdb = dbFile.exists();
-//        return checkdb;
-//        checkDB = SQLiteDatabase.openDatabase(DB_PATH,null,SQLiteDatabase.OPEN_READONLY);
-//        if(checkDB != null){
-//            checkDB.close();
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-
     public void openDatabase(){
         try {
             copyDataBase();

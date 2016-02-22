@@ -65,12 +65,14 @@ public class WeatherActivity extends Activity {
             @Override
             public void onClick(View v) {
                 publishTimeText.setText("同步中...");
-                PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit().clear().commit();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
+                currentCityId = prefs.getString("city_id","");
                 requestWeatherInfo(currentCityId);
             }
         });
         currentCityId = getIntent().getStringExtra("cityId");
         requestWeatherInfo(currentCityId);
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("city_id",currentCityId).commit();
     }
     private void requestWeatherInfo(final String cityId){
         String address = APIHEAD + "cityid=" + cityId + "&key=" + APIKEY;
