@@ -3,9 +3,9 @@ package com.example.waffle.waffleweather.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,7 @@ import java.io.OutputStream;
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
 
-    private static String DB_PATH = "/data/data/com.example.waffle.waffleweather/databases/CityList";
+    private static String DB_PATH = "/data/data/com.example.waffle.waffleweather/databases/";
 
     private static String DB_NAME = "CityList";
 
@@ -24,13 +24,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private final Context mcontext;
 
-    public DataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public DataBaseHelper(Context context) {
+        super(context, DB_NAME, null, 1);
         this.mcontext = context;
     }
 
     public void createDataBase() throws IOException{
-        boolean dbExist = checkDataBase();
+        boolean dbExist = new File(DB_PATH+DB_NAME).exists();
         if(!dbExist){
             this.getWritableDatabase();
             copyDataBase();
@@ -39,7 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private void copyDataBase() throws IOException{
         InputStream input = mcontext.getAssets().open(DB_NAME);
-        OutputStream out = new FileOutputStream(DB_PATH);
+        OutputStream out = new FileOutputStream(DB_PATH+DB_NAME);
         byte[] buffer = new byte[1024];
         int length;
         while((length = input.read(buffer))>0){
@@ -50,19 +50,28 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         input.close();
     }
 
-    private boolean checkDataBase(){
-        SQLiteDatabase checkDB = null;
-        checkDB = SQLiteDatabase.openDatabase(DB_PATH,null,SQLiteDatabase.OPEN_READONLY);
-        if(checkDB != null){
-            checkDB.close();
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    private boolean checkDataBase(){
+//        boolean checkdb = false;
+//        String mPath = DB_PATH+DB_NAME;
+//        File dbFile = new File(mPath);
+//        checkdb = dbFile.exists();
+//        return checkdb;
+//        checkDB = SQLiteDatabase.openDatabase(DB_PATH,null,SQLiteDatabase.OPEN_READONLY);
+//        if(checkDB != null){
+//            checkDB.close();
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
     public void openDatabase(){
-        database = SQLiteDatabase.openDatabase(DB_PATH,null,SQLiteDatabase.OPEN_READONLY);
+        try {
+            copyDataBase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        database = SQLiteDatabase.openDatabase(DB_PATH+DB_NAME,null,SQLiteDatabase.OPEN_READONLY);
     }
 
     public synchronized void close(){

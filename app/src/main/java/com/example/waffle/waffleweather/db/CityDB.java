@@ -3,6 +3,7 @@ package com.example.waffle.waffleweather.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class CityDB {
                                                   "海南","贵州","云南","四川","西藏","陕西","宁夏","甘肃","青海","新疆"};
 
     public CityDB(Context context) {
-        DataBaseHelper dbHelper = new DataBaseHelper(context,DB_NAME,null,VERSION);
+        DataBaseHelper dbHelper = new DataBaseHelper(context);
         try {
             dbHelper.createDataBase();
 
