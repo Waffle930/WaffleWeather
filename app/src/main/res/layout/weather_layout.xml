@@ -1,205 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#2288f0">
-        <Button
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/home_button"
-            android:background="@drawable/home"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"/>
-        <Button
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/refresh_button"
-            android:background="@drawable/refresh"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="15dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/city_name"
-            android:layout_centerInParent="true"
-            android:textColor="#fff"
-            android:textSize="24sp"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#2288f0">
-        <TextView
-            android:id="@+id/publish_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_margin="10dp"
-            android:layout_marginTop="10dp"
-            android:textSize="18sp"
-            android:textColor="#FFF"/>
-        <LinearLayout
-            android:id="@+id/weather_info_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical">
-            <TextView
-                android:gravity="center"
-                android:textColor="#FFF"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:id="@+id/current_date"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:id="@+id/weather_desp"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:textColor="#FFF"
-                android:textSize="40sp"/>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/temp1"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="#FFF"
-                    android:textSize="40sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:text="~"
-                    android:textColor="#FFF"
-                    android:textSize="40sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/temp2"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="#FFF"
-                    android:textSize="40sp"/>
-            </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
-        android:background="#2288f0">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#2288f0">
+
+            <Button
+                android:id="@+id/home_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/navigation" />
+
             <TextView
+                android:id="@+id/city_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/date1"
-                android:textColor="#FFF"
-                android:textSize="15sp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"/>
-            <ImageView
-                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
                 android:layout_centerInParent="true"
-                android:layout_marginBottom="10dp"
-                android:id="@+id/date1_pic"
-                android:layout_width="30dp"
-                android:layout_height="30dp"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+                android:layout_marginTop="10dp"
+                android:textColor="#fff"
+                android:textSize="24sp" />
+
             <TextView
+                android:id="@+id/publish_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/date2"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="60dp"
                 android:textColor="#FFF"
-                android:textSize="15sp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"/>
-            <ImageView
-                android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="10dp"
-                android:id="@+id/date2_pic"
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <TextView
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/weather_info_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/date3"
-                android:textColor="#FFF"
-                android:textSize="15sp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"/>
-            <ImageView
-                android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
-                android:layout_marginBottom="10dp"
-                android:id="@+id/date3_pic"
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/now_pic"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:id="@+id/weather_desp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:textColor="#FFF"
+                    android:textSize="30sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/temp1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="#FFF"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="~"
+                        android:textColor="#FFF"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/temp2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="#FFF"
+                        android:textSize="30sp" />
+                </LinearLayout>
+            </LinearLayout>
         </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/date4"
-                android:textColor="#FFF"
-                android:textSize="15sp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"/>
-            <ImageView
-                android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="10dp"
-                android:id="@+id/date4_pic"
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/date5"
-                android:textColor="#FFF"
-                android:textSize="15sp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"/>
-            <ImageView
-                android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="10dp"
-                android:id="@+id/date5_pic"
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
-        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="#2288f0"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/date1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFF"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/date1_pic"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="10dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/date2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFF"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/date2_pic"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="10dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/date3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFF"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/date3_pic"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="10dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/date4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFF"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/date4_pic"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="10dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/date5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#FFF"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/date5_pic"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="10dp" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
+
+

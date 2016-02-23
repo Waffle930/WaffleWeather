@@ -6,13 +6,19 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RecoverySystem;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.graphics.drawable.DrawableWrapper;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -39,26 +45,32 @@ import java.util.Date;
  */
 
 public class WeatherActivity extends Activity {
-    private LinearLayout weatherInfoLayout;
+
+    private DrawerLayout drawerLayout;
+    private SwipeRefreshLayout refreshLayout;
+    private NavigationView navigation;
+
     private TextView cityNameText;
     private TextView tempMinText;
     private TextView tempMaxText;
     private TextView weatherText;
     private TextView publishTimeText;
-    private TextView currentDateText;
     private String currentCityId;
     private Button home;
-    private Button refresh;
+
+    private ImageView nowPic;
     private ImageView date1DayPic;
     private ImageView date2DayPic;
     private ImageView date3DayPic;
     private ImageView date4DayPic;
     private ImageView date5DayPic;
+
     private TextView date1;
     private TextView date2;
     private TextView date3;
     private TextView date4;
     private TextView date5;
+
     private String[] dayOfWeek = {"星期日","星期一","星期二","星期三","星期四","星期五","星期六"};
 
 //    https://api.heweather.com/x3/weather?cityid=城市ID&key=你的认证key
@@ -69,14 +81,16 @@ public class WeatherActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.weather_layout);
-        weatherInfoLayout = (LinearLayout) findViewById(R.id.weather_info_layout);
+        setContentView(R.layout.main_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        navigation = (NavigationView) findViewById(R.id.navigation);
         cityNameText = (TextView) findViewById(R.id.city_name);
         tempMinText = (TextView) findViewById(R.id.temp1);
         tempMaxText = (TextView) findViewById(R.id.temp2);
         weatherText = (TextView) findViewById(R.id.weather_desp);
         publishTimeText = (TextView) findViewById(R.id.publish_text);
-        currentDateText = (TextView) findViewById(R.id.current_date);
+        nowPic = (ImageView) findViewById(R.id.now_pic);
         date1DayPic = (ImageView) findViewById(R.id.date1_pic);
         date2DayPic = (ImageView) findViewById(R.id.date2_pic);
         date3DayPic = (ImageView) findViewById(R.id.date3_pic);
@@ -88,29 +102,52 @@ public class WeatherActivity extends Activity {
         date4 = (TextView) findViewById(R.id.date4);
         date5 = (TextView) findViewById(R.id.date5);
         home = (Button) findViewById(R.id.home_button);
-        refresh = (Button) findViewById(R.id.refresh_button);
-        home.setOnClickListener(new View.OnClickListener() {
+        refreshLayout.setColorSchemeColors(Color.BLUE);
+        refreshLayout.setBackgroundColor(Color.WHITE);
+        refreshLayout.setSize(SwipeRefreshLayout.LARGE);
+        refreshLayout.setProgressViewEndTarget(true,100);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View v) {
-                PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit().clear().commit();
-                Intent intent = new Intent(WeatherActivity.this,ChooseAreaActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            public void onRefresh() {
                 publishTimeText.setText("同步中...");
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
                 currentCityId = prefs.getString("city_id","");
                 requestWeatherInfo(currentCityId);
+                refreshLayout.setRefreshing(false);
+            }
+        });
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.select_city:
+                        PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit().clear().commit();
+                        Intent intentChoose = new Intent(WeatherActivity.this,ChooseAreaActivity.class);
+                        startActivity(intentChoose);
+                        finish();
+                        break;
+                    case R.id.about:
+                        drawerLayout.closeDrawers();
+
+                        Intent intentAbout = new Intent(WeatherActivity.this,AboutActivity.class);
+                        startActivity(intentAbout);
+                        break;
+                    default:
+                        drawerLayout.closeDrawers();
+                        break;
+                }
+                return true;
             }
         });
         currentCityId = getIntent().getStringExtra("cityId");
         requestWeatherInfo(currentCityId);
         PreferenceManager.getDefaultSharedPreferences(this).edit().putString("city_id",currentCityId).commit();
-
     }
 
     private void requestWeatherInfo(final String cityId){
@@ -138,7 +175,6 @@ public class WeatherActivity extends Activity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         cityNameText.setText(prefs.getString("city_name",""));
         publishTimeText.setText(prefs.getString("publish_time","")+"发布");
-        currentDateText.setText(prefs.getString("current_date",""));
         String weatherDay = prefs.getString("weather_day","");
         String weatherNight = prefs.getString("weather_night","");
         if(weatherDay.equals(weatherNight)){
@@ -146,8 +182,9 @@ public class WeatherActivity extends Activity {
         }else{
             weatherText.setText(weatherDay + "转" + weatherNight);
         }
-        tempMinText.setText(prefs.getString("temp_min","")+"℃");
+        tempMinText.setText(prefs.getString("temp_min",""));
         tempMaxText.setText(prefs.getString("temp_max","")+"℃");
+        showForecast(nowPic,prefs.getString("now_pic","999"));
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
         showForecast(date1DayPic,prefs.getString("date1_day_pic","999"));
@@ -162,7 +199,6 @@ public class WeatherActivity extends Activity {
         date5.setText(dayOfWeek[(today+3)%7]);
     }
 
-//    http://files.heweather.com/cond_icon/100.png
     private void showForecast(ImageView imageView,String picId){
         try {
             InputStream in = this.getAssets().open("weather/"+picId+".png");
@@ -170,6 +206,15 @@ public class WeatherActivity extends Activity {
             imageView.setImageBitmap(weatherPic);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawers();
+        } else {
+            finish();
         }
     }
 }

@@ -27,6 +27,7 @@ public class Utility {
             JSONObject update = basic.getJSONObject("update");
             String publishTime = update.getString("loc");
             JSONArray dailyForecast = weatherData.getJSONArray("daily_forecast");
+            String nowPic = weatherData.getJSONObject("now").getJSONObject("cond").getString("code");
             JSONObject date1 = dailyForecast.optJSONObject(0);
             JSONObject tmp = date1.getJSONObject("tmp");
             String tempMin = tmp.getString("min");
@@ -39,13 +40,12 @@ public class Utility {
             String date3DayPic = dailyForecast.optJSONObject(2).getJSONObject("cond").getString("code_d");
             String date4DayPic = dailyForecast.optJSONObject(3).getJSONObject("cond").getString("code_d");
             String date5DayPic = dailyForecast.optJSONObject(4).getJSONObject("cond").getString("code_d");
-            saveWeatherInfo(context,cityName,tempMin,tempMax,weatherDay,weatherNight,publishTime,date1DayPic,date2DayPic,date3DayPic,date4DayPic,date5DayPic);
+            saveWeatherInfo(context,cityName,tempMin,tempMax,weatherDay,weatherNight,publishTime,date1DayPic,date2DayPic,date3DayPic,date4DayPic,date5DayPic,nowPic);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-    public static void saveWeatherInfo(Context context , String cityName,String tempMin,String tempMax,String weatherDay,String weatherNight,String publishTime,String date1DayPic,String date2DayPic,String date3DayPic,String date4DayPic,String date5DayPic){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+    public static void saveWeatherInfo(Context context , String cityName,String tempMin,String tempMax,String weatherDay,String weatherNight,String publishTime,String date1DayPic,String date2DayPic,String date3DayPic,String date4DayPic,String date5DayPic,String nowPic){
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putBoolean("city_selected",true);
         editor.putString("city_name",cityName);
@@ -54,12 +54,12 @@ public class Utility {
         editor.putString("weather_day",weatherDay);
         editor.putString("weather_night",weatherNight);
         editor.putString("publish_time",publishTime);
-        editor.putString("current_date",sdf.format(new Date()));
         editor.putString("date1_day_pic",date1DayPic);
         editor.putString("date2_day_pic",date2DayPic);
         editor.putString("date3_day_pic",date3DayPic);
         editor.putString("date4_day_pic",date4DayPic);
         editor.putString("date5_day_pic",date5DayPic);
+        editor.putString("now_pic",nowPic);
         editor.commit();
     }
 }
