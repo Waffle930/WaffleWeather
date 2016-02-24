@@ -118,7 +118,6 @@ public class WeatherActivity extends Activity {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
                 currentCityId = prefs.getString("city_id","");
                 requestWeatherInfo(currentCityId);
-
             }
         });
         home.setOnClickListener(new View.OnClickListener() {
@@ -135,12 +134,13 @@ public class WeatherActivity extends Activity {
                         PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit().clear().commit();
                         Intent intentChoose = new Intent(WeatherActivity.this,ChooseAreaActivity.class);
                         startActivity(intentChoose);
-                        finish();
+                        drawerLayout.closeDrawers();
                         break;
                     case R.id.about:
                         drawerLayout.closeDrawers();
                         Intent intentAbout = new Intent(WeatherActivity.this,AboutActivity.class);
                         startActivity(intentAbout);
+                        drawerLayout.closeDrawers();
                         break;
                     default:
                         drawerLayout.closeDrawers();
