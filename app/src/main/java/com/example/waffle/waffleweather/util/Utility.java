@@ -2,6 +2,13 @@ package com.example.waffle.waffleweather.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
@@ -18,8 +25,8 @@ import java.util.Locale;
  * Created by Waffle on 2016/2/21.
  */
 public class Utility {
-    public static void handleWeatherResponse(Context context , String response){
-        try{
+    public static void handleWeatherResponse(Context context, String response) {
+        try {
             JSONObject jsonObject = new JSONObject(response);
             JSONObject weatherData = (JSONObject) jsonObject.getJSONArray("HeWeather data service 3.0").opt(0);
             JSONObject basic = weatherData.getJSONObject("basic");
@@ -40,26 +47,46 @@ public class Utility {
             String date3DayPic = dailyForecast.optJSONObject(2).getJSONObject("cond").getString("code_d");
             String date4DayPic = dailyForecast.optJSONObject(3).getJSONObject("cond").getString("code_d");
             String date5DayPic = dailyForecast.optJSONObject(4).getJSONObject("cond").getString("code_d");
-            saveWeatherInfo(context,cityName,tempMin,tempMax,weatherDay,weatherNight,publishTime,date1DayPic,date2DayPic,date3DayPic,date4DayPic,date5DayPic,nowPic);
-        }catch (Exception e){
+            saveWeatherInfo(context, cityName, tempMin, tempMax, weatherDay, weatherNight, publishTime, date1DayPic, date2DayPic, date3DayPic, date4DayPic, date5DayPic,nowPic);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static void saveWeatherInfo(Context context , String cityName,String tempMin,String tempMax,String weatherDay,String weatherNight,String publishTime,String date1DayPic,String date2DayPic,String date3DayPic,String date4DayPic,String date5DayPic,String nowPic){
+
+    public static void saveWeatherInfo(Context context, String cityName, String tempMin, String tempMax, String weatherDay, String weatherNight, String publishTime, String date1DayPic, String date2DayPic, String date3DayPic, String date4DayPic, String date5DayPic,String nowPic) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        editor.putBoolean("city_selected",true);
-        editor.putString("city_name",cityName);
-        editor.putString("temp_min",tempMin);
-        editor.putString("temp_max",tempMax);
-        editor.putString("weather_day",weatherDay);
-        editor.putString("weather_night",weatherNight);
-        editor.putString("publish_time",publishTime);
-        editor.putString("date1_day_pic",date1DayPic);
-        editor.putString("date2_day_pic",date2DayPic);
-        editor.putString("date3_day_pic",date3DayPic);
-        editor.putString("date4_day_pic",date4DayPic);
-        editor.putString("date5_day_pic",date5DayPic);
+        editor.putBoolean("city_selected", true);
+        editor.putString("city_name", cityName);
+        editor.putString("temp_min", tempMin);
+        editor.putString("temp_max", tempMax);
+        editor.putString("weather_day", weatherDay);
+        editor.putString("weather_night", weatherNight);
+        editor.putString("publish_time", publishTime);
+        editor.putString("date1_day_pic", date1DayPic);
+        editor.putString("date2_day_pic", date2DayPic);
+        editor.putString("date3_day_pic", date3DayPic);
+        editor.putString("date4_day_pic", date4DayPic);
+        editor.putString("date5_day_pic", date5DayPic);
         editor.putString("now_pic",nowPic);
         editor.commit();
+    }
+
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        float roundPx = w / 2;
+        Bitmap output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, w, h);
+        final RectF rectF = new RectF(rect);
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
     }
 }

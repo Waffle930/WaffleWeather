@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ public class WeatherActivity extends Activity {
 
     private DrawerLayout drawerLayout;
     private SwipeRefreshLayout refreshLayout;
+    private LinearLayout backgroundLayout;
     private NavigationView navigation;
 
     private TextView cityNameText;
@@ -56,9 +58,10 @@ public class WeatherActivity extends Activity {
     private TextView weatherText;
     private TextView publishTimeText;
     private String currentCityId;
+
     private Button home;
 
-    private ImageView nowPic;
+    private ImageView userPic;
     private ImageView date1DayPic;
     private ImageView date2DayPic;
     private ImageView date3DayPic;
@@ -84,13 +87,14 @@ public class WeatherActivity extends Activity {
         setContentView(R.layout.main_layout);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        backgroundLayout = (LinearLayout) findViewById(R.id.background_layout);
         navigation = (NavigationView) findViewById(R.id.navigation);
         cityNameText = (TextView) findViewById(R.id.city_name);
         tempMinText = (TextView) findViewById(R.id.temp1);
         tempMaxText = (TextView) findViewById(R.id.temp2);
         weatherText = (TextView) findViewById(R.id.weather_desp);
         publishTimeText = (TextView) findViewById(R.id.publish_text);
-        nowPic = (ImageView) findViewById(R.id.now_pic);
+        userPic = (ImageView) navigation.getHeaderView(0).findViewById(R.id.user_pic);
         date1DayPic = (ImageView) findViewById(R.id.date1_pic);
         date2DayPic = (ImageView) findViewById(R.id.date2_pic);
         date3DayPic = (ImageView) findViewById(R.id.date3_pic);
@@ -102,18 +106,19 @@ public class WeatherActivity extends Activity {
         date4 = (TextView) findViewById(R.id.date4);
         date5 = (TextView) findViewById(R.id.date5);
         home = (Button) findViewById(R.id.home_button);
-        refreshLayout.setColorSchemeColors(Color.BLUE);
+        userPic.setImageBitmap(Utility.getRoundedCornerBitmap(BitmapFactory.decodeResource(this.getResources(),R.drawable.user)));
+        refreshLayout.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN);
         refreshLayout.setBackgroundColor(Color.WHITE);
         refreshLayout.setSize(SwipeRefreshLayout.LARGE);
-        refreshLayout.setProgressViewEndTarget(true,100);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                refreshLayout.setRefreshing(true);
                 publishTimeText.setText("同步中...");
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
                 currentCityId = prefs.getString("city_id","");
                 requestWeatherInfo(currentCityId);
-                refreshLayout.setRefreshing(false);
+
             }
         });
         home.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +139,6 @@ public class WeatherActivity extends Activity {
                         break;
                     case R.id.about:
                         drawerLayout.closeDrawers();
-
                         Intent intentAbout = new Intent(WeatherActivity.this,AboutActivity.class);
                         startActivity(intentAbout);
                         break;
@@ -160,6 +164,7 @@ public class WeatherActivity extends Activity {
                     @Override
                     public void run() {
                         showWeather();
+                        refreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -184,7 +189,6 @@ public class WeatherActivity extends Activity {
         }
         tempMinText.setText(prefs.getString("temp_min",""));
         tempMaxText.setText(prefs.getString("temp_max","")+"℃");
-        showForecast(nowPic,prefs.getString("now_pic","999"));
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
         showForecast(date1DayPic,prefs.getString("date1_day_pic","999"));
@@ -197,15 +201,93 @@ public class WeatherActivity extends Activity {
         date4.setText(dayOfWeek[(today+2)%7]);
         showForecast(date5DayPic,prefs.getString("date5_day_pic","999"));
         date5.setText(dayOfWeek[(today+3)%7]);
+        try {
+            showBackground(prefs.getString("now_pic","999"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showForecast(ImageView imageView,String picId){
         try {
-            InputStream in = this.getAssets().open("weather/"+picId+".png");
+            InputStream in = this.getAssets().open("forcastPic/"+picId+".png");
             Bitmap weatherPic = BitmapFactory.decodeStream(in);
             imageView.setImageBitmap(weatherPic);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void showBackground(String nowPic) throws IOException{
+        switch (nowPic){
+            case "100":
+            case "103":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/sun.jpg"),null));
+                break;
+            case "101":
+            case "102":
+            case "104":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/cloud.jpg"),null));
+                break;
+            case "300":
+            case "301":
+            case "305":
+            case "306":
+            case "307":
+            case "308":
+            case "309":
+            case "310":
+            case "311":
+            case "312":
+            case "313":
+            case "406":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/rain.jpg"),null));
+                break;
+            case "500":
+            case "501":
+            case "502":
+            case "503":
+            case "504":
+            case "506":
+            case "507":
+            case "508":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/sandy.jpg"),null));
+                break;
+            case "400":
+            case "401":
+            case "402":
+            case "403":
+            case "404":
+            case "405":
+            case "407":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/snow.jpg"),null));
+                break;
+            case "200":
+            case "201":
+            case "202":
+            case "203":
+            case "204":
+            case "205":
+            case "206":
+            case "207":
+            case "208":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/wind.jpg"),null));
+                break;
+            case "209":
+            case "210":
+            case "211":
+            case "212":
+            case "213":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/storm.jpg"),null));
+                break;
+            case "302":
+            case "303":
+            case "304":
+                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/thunder.jpg"),null));
+                break;
+            default:
+                backgroundLayout.setBackgroundColor(Color.BLUE);
+                break;
         }
     }
 
