@@ -36,6 +36,7 @@ public class ChooseAreaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("city_selected",false)){
             Intent intent = new Intent(this,WeatherActivity.class);
@@ -92,5 +93,11 @@ public class ChooseAreaActivity extends Activity {
         }else if(currentLevel == LEVEL_PROVINCE){
             finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 }

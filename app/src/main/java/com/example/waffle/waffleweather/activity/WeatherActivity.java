@@ -40,6 +40,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Waffle on 2016/2/21.
@@ -74,6 +76,8 @@ public class WeatherActivity extends Activity {
     private TextView date4;
     private TextView date5;
 
+    private Boolean isExit = false;
+
     private String[] dayOfWeek = {"星期日","星期一","星期二","星期三","星期四","星期五","星期六"};
 
 //    https://api.heweather.com/x3/weather?cityid=城市ID&key=你的认证key
@@ -83,6 +87,7 @@ public class WeatherActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_layout);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -291,12 +296,36 @@ public class WeatherActivity extends Activity {
         }
     }
 
+    private void exitApp(){
+        Timer tExit = null;
+        if(isExit == false){
+            isExit = true;
+            Toast.makeText(this,"再按一次退出",Toast.LENGTH_SHORT).show();
+            tExit = new Timer();
+            tExit.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isExit = false;
+                }
+            },2000);
+        }else{
+            ActivityCollector.finishAll();
+            System.exit(0);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawers();
         } else {
-            finish();
+            exitApp();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 }

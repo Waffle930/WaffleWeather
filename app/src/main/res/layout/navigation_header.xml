@@ -19,6 +19,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:text="Waffle"
+        android:textColor="#fff"
         android:textSize="20sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
