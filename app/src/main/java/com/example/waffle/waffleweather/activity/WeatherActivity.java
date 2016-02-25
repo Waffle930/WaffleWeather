@@ -3,56 +3,59 @@ package com.example.waffle.waffleweather.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.RecoverySystem;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.graphics.drawable.DrawableWrapper;
-import android.text.TextUtils;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.example.waffle.waffleweather.R;
+import com.example.waffle.waffleweather.util.ActivityCollector;
 import com.example.waffle.waffleweather.util.HttpCallbackListener;
 import com.example.waffle.waffleweather.util.HttpUtil;
 import com.example.waffle.waffleweather.util.Utility;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Handler;
 
 /**
  * Created by Waffle on 2016/2/21.
  */
 
-public class WeatherActivity extends Activity {
+public class WeatherActivity extends Activity{
 
     private DrawerLayout drawerLayout;
     private SwipeRefreshLayout refreshLayout;
-    private LinearLayout backgroundLayout;
     private NavigationView navigation;
+    private LinearLayout background;
+    private ViewPager viewPager;
+
 
     private TextView cityNameText;
     private TextView tempMinText;
@@ -60,9 +63,22 @@ public class WeatherActivity extends Activity {
     private TextView weatherText;
     private TextView publishTimeText;
     private String currentCityId;
+    private TextView date1;
+    private TextView date2;
+    private TextView date3;
+    private TextView date4;
+    private TextView date5;
+    private TextView comfText;
+    private TextView drsgText;
+    private TextView fluText;
+    private TextView sportText;
+    private TextView travText;
+    private TextView uvText;
 
     private Button home;
 
+    private View weatherView,suggestView;
+    private List<View> viewList;
     private ImageView userPic;
     private ImageView date1DayPic;
     private ImageView date2DayPic;
@@ -70,11 +86,6 @@ public class WeatherActivity extends Activity {
     private ImageView date4DayPic;
     private ImageView date5DayPic;
 
-    private TextView date1;
-    private TextView date2;
-    private TextView date3;
-    private TextView date4;
-    private TextView date5;
 
     private Boolean isExit = false;
 
@@ -90,27 +101,63 @@ public class WeatherActivity extends Activity {
         ActivityCollector.addActivity(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main_layout);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        weatherView = layoutInflater.inflate(R.layout.weather_layout,null);
+        suggestView = layoutInflater.inflate(R.layout.suggest_layout,null);
+        background = (LinearLayout) findViewById(R.id.background);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
-        backgroundLayout = (LinearLayout) findViewById(R.id.background_layout);
         navigation = (NavigationView) findViewById(R.id.navigation);
-        cityNameText = (TextView) findViewById(R.id.city_name);
-        tempMinText = (TextView) findViewById(R.id.temp1);
-        tempMaxText = (TextView) findViewById(R.id.temp2);
-        weatherText = (TextView) findViewById(R.id.weather_desp);
-        publishTimeText = (TextView) findViewById(R.id.publish_text);
-        userPic = (ImageView) navigation.getHeaderView(0).findViewById(R.id.user_pic);
-        date1DayPic = (ImageView) findViewById(R.id.date1_pic);
-        date2DayPic = (ImageView) findViewById(R.id.date2_pic);
-        date3DayPic = (ImageView) findViewById(R.id.date3_pic);
-        date4DayPic = (ImageView) findViewById(R.id.date4_pic);
-        date5DayPic = (ImageView) findViewById(R.id.date5_pic);
-        date1 = (TextView) findViewById(R.id.date1);
-        date2 = (TextView) findViewById(R.id.date2);
-        date3 = (TextView) findViewById(R.id.date3);
-        date4 = (TextView) findViewById(R.id.date4);
-        date5 = (TextView) findViewById(R.id.date5);
         home = (Button) findViewById(R.id.home_button);
+        cityNameText = (TextView) findViewById(R.id.city_name);
+        tempMinText = (TextView) weatherView.findViewById(R.id.temp1);
+        tempMaxText = (TextView) weatherView.findViewById(R.id.temp2);
+        weatherText = (TextView) weatherView.findViewById(R.id.weather_desp);
+        publishTimeText = (TextView) weatherView.findViewById(R.id.publish_text);
+        userPic = (ImageView) navigation.getHeaderView(0).findViewById(R.id.user_pic);
+        date1DayPic = (ImageView) weatherView.findViewById(R.id.date1_pic);
+        date2DayPic = (ImageView) weatherView.findViewById(R.id.date2_pic);
+        date3DayPic = (ImageView) weatherView.findViewById(R.id.date3_pic);
+        date4DayPic = (ImageView) weatherView.findViewById(R.id.date4_pic);
+        date5DayPic = (ImageView) weatherView.findViewById(R.id.date5_pic);
+        date1 = (TextView) weatherView.findViewById(R.id.date1);
+        date2 = (TextView) weatherView.findViewById(R.id.date2);
+        date3 = (TextView) weatherView.findViewById(R.id.date3);
+        date4 = (TextView) weatherView.findViewById(R.id.date4);
+        date5 = (TextView) weatherView.findViewById(R.id.date5);
+        comfText = (TextView) suggestView.findViewById(R.id.comf_text);
+        drsgText = (TextView) suggestView.findViewById(R.id.drsg_text);
+        fluText = (TextView) suggestView.findViewById(R.id.flu_text);
+        sportText = (TextView) suggestView.findViewById(R.id.sport_text);
+        travText = (TextView) suggestView.findViewById(R.id.trav_text);
+        uvText = (TextView) suggestView.findViewById(R.id.uv_text);
+        viewList = new ArrayList<>();
+        viewList.add(weatherView);
+        viewList.add(suggestView);
+        PagerAdapter pagerAdapter = new PagerAdapter() {
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                container.addView(viewList.get(position));
+                return viewList.get(position);
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView(viewList.get(position));
+            }
+
+            @Override
+            public int getCount() {
+                return viewList.size();
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+        };
+        viewPager.setAdapter(pagerAdapter);
         userPic.setImageBitmap(Utility.getRoundedCornerBitmap(BitmapFactory.decodeResource(this.getResources(),R.drawable.user)));
         refreshLayout.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN);
         refreshLayout.setBackgroundColor(Color.WHITE);
@@ -142,7 +189,6 @@ public class WeatherActivity extends Activity {
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.about:
-                        drawerLayout.closeDrawers();
                         Intent intentAbout = new Intent(WeatherActivity.this,AboutActivity.class);
                         startActivity(intentAbout);
                         drawerLayout.closeDrawers();
@@ -211,6 +257,12 @@ public class WeatherActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        comfText.setText(prefs.getString("comf_index",""));
+        drsgText.setText(prefs.getString("drsg_index",""));
+        fluText.setText(prefs.getString("flu_index",""));
+        sportText.setText(prefs.getString("sport_index",""));
+        travText.setText(prefs.getString("trav_index",""));
+        uvText.setText(prefs.getString("uv_index",""));
     }
 
     private void showForecast(ImageView imageView,String picId){
@@ -227,12 +279,12 @@ public class WeatherActivity extends Activity {
         switch (nowPic){
             case "100":
             case "103":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/sun.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/sun.jpg"),null));
                 break;
             case "101":
             case "102":
             case "104":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/cloud.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/cloud.jpg"),null));
                 break;
             case "300":
             case "301":
@@ -246,7 +298,7 @@ public class WeatherActivity extends Activity {
             case "312":
             case "313":
             case "406":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/rain.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/rain.jpg"),null));
                 break;
             case "500":
             case "501":
@@ -256,7 +308,7 @@ public class WeatherActivity extends Activity {
             case "506":
             case "507":
             case "508":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/sandy.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/sandy.jpg"),null));
                 break;
             case "400":
             case "401":
@@ -265,7 +317,7 @@ public class WeatherActivity extends Activity {
             case "404":
             case "405":
             case "407":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/snow.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/snow.jpg"),null));
                 break;
             case "200":
             case "201":
@@ -276,22 +328,22 @@ public class WeatherActivity extends Activity {
             case "206":
             case "207":
             case "208":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/wind.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/wind.jpg"),null));
                 break;
             case "209":
             case "210":
             case "211":
             case "212":
             case "213":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/storm.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/storm.jpg"),null));
                 break;
             case "302":
             case "303":
             case "304":
-                backgroundLayout.setBackground(Drawable.createFromStream(getAssets().open("currentPic/thunder.jpg"),null));
+                background.setBackground(Drawable.createFromStream(getAssets().open("currentPic/thunder.jpg"),null));
                 break;
             default:
-                backgroundLayout.setBackgroundColor(Color.BLUE);
+                background.setBackgroundColor(Color.parseColor("#3fa9f4"));
                 break;
         }
     }

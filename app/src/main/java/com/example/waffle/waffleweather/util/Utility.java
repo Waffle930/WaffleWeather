@@ -47,13 +47,22 @@ public class Utility {
             String date3DayPic = dailyForecast.optJSONObject(2).getJSONObject("cond").getString("code_d");
             String date4DayPic = dailyForecast.optJSONObject(3).getJSONObject("cond").getString("code_d");
             String date5DayPic = dailyForecast.optJSONObject(4).getJSONObject("cond").getString("code_d");
-            saveWeatherInfo(context, cityName, tempMin, tempMax, weatherDay, weatherNight, publishTime, date1DayPic, date2DayPic, date3DayPic, date4DayPic, date5DayPic,nowPic);
+            JSONObject suggest = weatherData.getJSONObject("suggestion");
+            String comf = suggest.getJSONObject("comf").getString("brf");
+            String drsg = suggest.getJSONObject("drsg").getString("brf");
+            String flu = suggest.getJSONObject("flu").getString("brf");
+            String sport = suggest.getJSONObject("sport").getString("brf");
+            String trav = suggest.getJSONObject("trav").getString("brf");
+            String uv = suggest.getJSONObject("uv").getString("brf");
+            saveWeatherInfo(context, cityName, tempMin, tempMax, weatherDay, weatherNight, publishTime, date1DayPic, date2DayPic, date3DayPic, date4DayPic, date5DayPic,nowPic,comf,drsg,flu,sport,trav,uv);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void saveWeatherInfo(Context context, String cityName, String tempMin, String tempMax, String weatherDay, String weatherNight, String publishTime, String date1DayPic, String date2DayPic, String date3DayPic, String date4DayPic, String date5DayPic,String nowPic) {
+    public static void saveWeatherInfo(Context context, String cityName, String tempMin, String tempMax, String weatherDay, String weatherNight, String publishTime,
+                                       String date1DayPic, String date2DayPic, String date3DayPic, String date4DayPic, String date5DayPic,String nowPic,
+                                       String comf,String drsg,String flu,String sport,String trav,String uv) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putBoolean("city_selected", true);
         editor.putString("city_name", cityName);
@@ -68,6 +77,12 @@ public class Utility {
         editor.putString("date4_day_pic", date4DayPic);
         editor.putString("date5_day_pic", date5DayPic);
         editor.putString("now_pic",nowPic);
+        editor.putString("comf_index",comf);
+        editor.putString("drsg_index",drsg);
+        editor.putString("flu_index",flu);
+        editor.putString("sport_index",sport);
+        editor.putString("trav_index",trav);
+        editor.putString("uv_index",uv);
         editor.commit();
     }
 

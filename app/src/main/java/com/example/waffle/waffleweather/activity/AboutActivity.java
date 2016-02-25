@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.example.waffle.waffleweather.R;
+import com.example.waffle.waffleweather.util.ActivityCollector;
 
 /**
  * Created by Waffle on 2016/2/23.

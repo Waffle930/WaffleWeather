@@ -1,4 +1,4 @@
-package com.example.waffle.waffleweather.activity;
+package com.example.waffle.waffleweather.util;
 
 import android.app.Activity;
 
